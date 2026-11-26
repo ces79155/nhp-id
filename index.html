@@ -138,13 +138,13 @@ table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:10px 8px
  <div class="grid2">
   <div class="pic">
    <div class="pw">
-    <img class="plate" src="img/plate_passport.jpg" alt="Тарелка «Синяя роза»: кобальтовая роспись по белому фарфору" width="720" height="720">
+    <img class="plate" src="plate_passport.jpg" alt="Тарелка «Синяя роза»: кобальтовая роспись по белому фарфору" width="720" height="720">
     <div class="seal" role="img" aria-label="Клеймо с QR-кодом паспорта">
      <svg viewBox="0 0 200 200" aria-hidden="true"><defs><path id="ring" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs><circle cx="100" cy="100" r="96" fill="none" stroke="#1d3f9a" stroke-width="5"/><circle cx="100" cy="100" r="64" fill="none" stroke="#1d3f9a" stroke-width="1.5"/><text font-family="Golos Text, sans-serif" font-size="15" font-weight="600" fill="#1d3f9a"><textPath href="#ring" textLength="486" lengthAdjust="spacing">ЦИФРОВОЙ ПАСПОРТ · НХП-ID · ГЖЕЛЬ · 2027 ·</textPath></text></svg>
-     <img src="img/qr.svg" alt="">
+     <img src="qr.svg" alt="">
     </div>
    </div>
-   <div class="thumbs"><img src="img/plate_detail.jpg" alt="Фрагмент росписи крупно" width="88" height="88"><span>Фрагмент росписи из паспорта: по нему строится визуальный отпечаток</span></div>
+   <div class="thumbs"><img src="plate_detail.jpg" alt="Фрагмент росписи крупно" width="88" height="88"><span>Фрагмент росписи из паспорта: по нему строится визуальный отпечаток</span></div>
   </div>
   <div>
    <p class="docttl">Цифровой паспорт изделия народного художественного промысла</p>
@@ -177,9 +177,9 @@ table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:10px 8px
  <h1>Проверка изделия по фото</h1>
  <p class="lead">Метка считана: НХП-ID <span class="id">50-ГЖ-27-000142</span>. Выберите снимок, который сделал покупатель, и система сравнит его с паспортом.</p>
  <div class="opts" role="group" aria-label="Снимок покупателя">
-  <button class="opt" id="o-own" data-s="own" aria-pressed="false"><img src="img/shot_own.jpg" alt="" width="480" height="480"><div><b>Это изделие</b><span>Снимок с телефона: другой ракурс и свет</span></div></button>
-  <button class="opt" id="o-other" data-s="other" aria-pressed="false"><img src="img/shot_other.jpg" alt="" width="480" height="480"><div><b>Другой экземпляр того же образца</b><span>Метку переклеили на похожую тарелку</span></div></button>
-  <button class="opt" id="o-print" data-s="print" aria-pressed="false"><img src="img/shot_print.jpg" alt="" width="480" height="480"><div><b>Тиражная копия</b><span>Рисунок нанесен деколью, а не кистью</span></div></button>
+  <button class="opt" id="o-own" data-s="own" aria-pressed="false"><img src="shot_own.jpg" alt="" width="480" height="480"><div><b>Это изделие</b><span>Снимок с телефона: другой ракурс и свет</span></div></button>
+  <button class="opt" id="o-other" data-s="other" aria-pressed="false"><img src="shot_other.jpg" alt="" width="480" height="480"><div><b>Другой экземпляр того же образца</b><span>Метку переклеили на похожую тарелку</span></div></button>
+  <button class="opt" id="o-print" data-s="print" aria-pressed="false"><img src="shot_print.jpg" alt="" width="480" height="480"><div><b>Тиражная копия</b><span>Рисунок нанесен деколью, а не кистью</span></div></button>
  </div>
  <ol class="steps" id="steps"><li>Совмещение снимка с паспортом по ключевым точкам</li><li>Сравнение микрофактуры мазков</li><li>Сверка с другими паспортами реестра</li></ol>
  <div id="res" hidden>
@@ -254,7 +254,7 @@ table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:10px 8px
    <div class="row"><button class="btn nx" type="button">Далее</button></div>
   </div>
   <div class="pane" data-p="1">
-   <div class="grid2"><img src="img/keypoints.jpg" alt="Ключевые точки росписи на фото тарелки" width="600" height="600" style="border-radius:14px"><div><p style="margin-top:0">Фото в лайтбоксе загружено. Алгоритм выделил ключевые точки и фактуру мазков.</p><p><b id="kp2">1 026</b> точек сохранено в паспорте как визуальный отпечаток. Отпечаток проверен на совпадение с уже выпущенными паспортами: <span class="ok">совпадений нет</span>, значит, роспись не тиражная.</p><div class="row"><button class="btn nx" type="button">Далее</button></div></div></div>
+   <div class="grid2"><img src="keypoints.jpg" alt="Ключевые точки росписи на фото тарелки" width="600" height="600" style="border-radius:14px"><div><p style="margin-top:0">Фото в лайтбоксе загружено. Алгоритм выделил ключевые точки и фактуру мазков.</p><p><b id="kp2">1 026</b> точек сохранено в паспорте как визуальный отпечаток. Отпечаток проверен на совпадение с уже выпущенными паспортами: <span class="ok">совпадений нет</span>, значит, роспись не тиражная.</p><div class="row"><button class="btn nx" type="button">Далее</button></div></div></div>
   </div>
   <div class="pane" data-p="2">
    <p style="margin-top:0">Паспорт подписывается усиленной квалифицированной электронной подписью изготовителя.</p>
@@ -268,7 +268,7 @@ table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:10px 8px
     <div class="chk"><input type="radio" name="car" id="ca2"><label for="ca2" style="margin:0;color:inherit">NFC-метка под лаком (дерево)</label></div>
     <div class="chk"><input type="radio" name="car" id="ca3"><label for="ca3" style="margin:0;color:inherit">Тканая этикетка с QR (текстиль)</label></div>
     <p>Паспорт <span class="id">50-ГЖ-27-000142</span> выпущен и доступен для проверки.</p><div class="row"><a class="btn" href="#passport">Открыть паспорт</a></div></div>
-    <div style="max-width:260px;margin:auto"><div class="seal" style="position:relative;right:auto;bottom:auto;width:100%"><svg viewBox="0 0 200 200" aria-hidden="true"><defs><path id="ring2" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs><circle cx="100" cy="100" r="96" fill="none" stroke="#1d3f9a" stroke-width="5"/><circle cx="100" cy="100" r="64" fill="none" stroke="#1d3f9a" stroke-width="1.5"/><text font-family="Golos Text, sans-serif" font-size="15" font-weight="600" fill="#1d3f9a"><textPath href="#ring2" textLength="486" lengthAdjust="spacing">ЦИФРОВОЙ ПАСПОРТ · НХП-ID · ГЖЕЛЬ · 2027 ·</textPath></text></svg><img src="img/qr.svg" alt="QR-код для деколи"></div><p style="text-align:center;font-size:14px;color:var(--mute)">Макет деколи ⌀&nbsp;30&nbsp;мм</p></div></div>
+    <div style="max-width:260px;margin:auto"><div class="seal" style="position:relative;right:auto;bottom:auto;width:100%"><svg viewBox="0 0 200 200" aria-hidden="true"><defs><path id="ring2" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs><circle cx="100" cy="100" r="96" fill="none" stroke="#1d3f9a" stroke-width="5"/><circle cx="100" cy="100" r="64" fill="none" stroke="#1d3f9a" stroke-width="1.5"/><text font-family="Golos Text, sans-serif" font-size="15" font-weight="600" fill="#1d3f9a"><textPath href="#ring2" textLength="486" lengthAdjust="spacing">ЦИФРОВОЙ ПАСПОРТ · НХП-ID · ГЖЕЛЬ · 2027 ·</textPath></text></svg><img src="qr.svg" alt="QR-код для деколи"></div><p style="text-align:center;font-size:14px;color:var(--mute)">Макет деколи ⌀&nbsp;30&nbsp;мм</p></div></div>
   </div>
  </div>
 </section>
@@ -323,7 +323,7 @@ function check(s){
     const r = R[s], v = V[s];
     $('verdict').className = 'verdict ' + v.c; $('vt').textContent = v.t; $('vd').textContent = v.d;
     $('inl').textContent = r.inliers;
-    $('fm').src = 'img/match_' + s + '.jpg'; $('ft').src = 'img/tex_' + s + '.jpg';
+    $('fm').src = 'match_' + s + '.jpg'; $('ft').src = 'tex_' + s + '.jpg';
     $('res').hidden = false;
     $('mk').style.left = '0%'; $('mv').style.left = '0%'; $('mv').textContent = fmt(r.score);
     requestAnimationFrame(() => requestAnimationFrame(() => { $('mk').style.left = (r.score * 100) + '%'; $('mv').style.left = (r.score * 100) + '%'; }));
@@ -341,7 +341,7 @@ const P = [
 ];
 function shop(){
   const only = $('onlyok').checked;
-  $('shop').innerHTML = P.filter(p => !only || p.ok).map(p => '<div class="prod"><img src="img/' + p.img + '" alt="" loading="lazy" width="420" height="420"><div class="price">' + p.pr + '</div><div class="nm">' + esc(p.nm) + '</div><div class="sl">' + esc(p.sl) + '</div>' + (p.ok ? '<span class="badge">✓ Подлинный НХП</span>' : '<span class="badge no">паспорта нет</span>') + '</div>').join('');
+  $('shop').innerHTML = P.filter(p => !only || p.ok).map(p => '<div class="prod"><img src="' + p.img + '" alt="" loading="lazy" width="420" height="420"><div class="price">' + p.pr + '</div><div class="nm">' + esc(p.nm) + '</div><div class="sl">' + esc(p.sl) + '</div>' + (p.ok ? '<span class="badge">✓ Подлинный НХП</span>' : '<span class="badge no">паспорта нет</span>') + '</div>').join('');
 }
 $('onlyok').addEventListener('change', shop); shop();
 
