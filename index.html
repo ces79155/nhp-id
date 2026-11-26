@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>НХП-ID прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=PT+Serif:wght@700&display=swap" rel="stylesheet">
+<style>
+/* VOICE  госсервис, сделанный как готовый продукт: спокойно, точно, по-русски
+   IDEA   фарфоровое клеймо и официальный паспорт: приложение ведет себя как документ на изделие
+   PICTURE на паспорте – сама расписанная тарелка с клеймом-QR; на проверке – живой результат сравнения
+   COLOUR белый фарфор, кобальт гжели ведет, глубокие чернила; коралл – отказ, охра – тираж
+   TYPE   Golos Text для интерфейса, PT Serif для заголовков документов
+   LAYOUT ноутбук: картинка слева, документ справа; телефон: статус, картинка, документ */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0d1531);--surf:light-dark(#f3f6fc,#141e42);--ink:light-dark(#0e1a3a,#e8eefb);--mute:light-dark(#4c5a7c,#a9b6d6);--line:light-dark(#d5ddee,#2a3866);--cob:light-dark(#1d3f9a,#86a6ff);--cob2:light-dark(#e6edfb,#1b2a5c);--bad:light-dark(#c2412a,#ff8b74);--bad2:light-dark(#fbeae6,#3a1d1a);--warn:light-dark(#9a6a00,#f0c35a);--warn2:light-dark(#fbf2dc,#3a2f14)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 "Golos Text",system-ui,sans-serif;overflow-x:clip}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--cob)}
+button,input,select,textarea{font:inherit;color:inherit}
+.top{position:sticky;top:0;z-index:5;background:var(--cob);color:#fff}
+.bar{display:flex;align-items:center;gap:18px;padding:10px max(4vw,16px);flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;color:#fff;text-decoration:none}
+.logo svg{width:30px;height:30px}
+nav{display:flex;gap:4px;overflow-x:auto;flex:1}
+nav a{flex:none;color:#dfe7ff;text-decoration:none;padding:10px 14px;border-radius:10px;font-weight:500;min-height:44px;display:flex;align-items:center}
+nav a[aria-current=page]{background:#fff;color:#1d3f9a}
+nav a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ffb347;outline-offset:2px}
+.note{background:var(--cob2);color:var(--ink);font-size:13px;padding:7px max(4vw,16px)}
+main{max-width:1240px;margin:0 auto;padding:clamp(20px,3vw,40px) max(4vw,16px) 48px}
+section{display:none}section.on{display:block}
+h1{font:700 clamp(28px,3.4vw,40px)/1.08 "PT Serif",Georgia,serif;letter-spacing:-.01em;margin:0 0 6px;text-wrap:balance}
+h2{font-size:20px;margin:28px 0 10px;line-height:1.2}
+.lead{color:var(--mute);margin:0 0 22px;max-width:70ch}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(20px,3vw,44px);align-items:start}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:20px}
+.status{display:flex;align-items:center;gap:14px;border-radius:14px;padding:14px 16px;margin-bottom:18px;background:var(--cob);color:#fff}
+.status b{font-size:19px;display:block;line-height:1.2}
+.status small{opacity:.85}
+.ico{width:34px;height:34px;flex:none}
+.pw{position:relative;max-width:560px}
+.pic .plate{border-radius:20px;background:#eeece8;width:100%}
+.seal{position:absolute;right:-8px;bottom:-18px;width:clamp(118px,30%,168px);aspect-ratio:1;background:#fff;border-radius:50%;box-shadow:0 6px 18px rgba(14,26,58,.25);display:grid;place-items:center}
+.seal svg{position:absolute;inset:0;width:100%;height:100%}
+.seal img{width:48%;height:48%}
+.thumbs{display:flex;gap:10px;margin-top:30px;align-items:center;flex-wrap:wrap;color:var(--mute);font-size:14px}
+.thumbs img{width:88px;height:88px;border-radius:12px;object-fit:cover}
+dl.doc{margin:0;display:grid;grid-template-columns:minmax(0,11em) minmax(0,1fr);border-top:1px solid var(--line)}
+dl.doc dt,dl.doc dd{margin:0;padding:10px 0;border-bottom:1px solid var(--line)}
+dl.doc dt{color:var(--mute);font-size:14px;padding-right:12px}
+.docttl{font:700 21px/1.2 "PT Serif",Georgia,serif;margin:0 0 4px}
+.id{font-weight:600;white-space:nowrap}
+.ok{color:var(--cob);font-weight:600}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:grid;grid-template-columns:6.5em minmax(0,1fr);gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.tl time{color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 18px;border-radius:12px;border:1px solid var(--cob);background:var(--cob);color:var(--bg);font-weight:600;cursor:pointer;text-decoration:none}
+.btn.ghost{background:transparent;color:var(--cob)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.opt{border:2px solid var(--line);border-radius:16px;background:var(--surf);padding:10px;cursor:pointer;text-align:left;display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;align-items:center}
+.opt[aria-pressed=true]{border-color:var(--cob);background:var(--cob2)}
+.opt img{border-radius:10px;aspect-ratio:1;object-fit:cover;width:100%}
+.opt b{display:block;line-height:1.25;margin-bottom:2px}
+.opt span{font-size:14px;color:var(--mute)}
+.steps{list-style:none;padding:0;margin:18px 0;display:grid;gap:6px}
+.steps li{color:var(--mute)}
+.steps li.done{color:var(--ink)}
+.steps li.done::before{content:"✓ ";color:var(--cob);font-weight:700}
+.verdict{border-radius:16px;padding:18px 20px;margin:14px 0}
+.v-ok{background:var(--cob2)}.v-bad{background:var(--bad2)}.v-warn{background:var(--warn2)}
+.verdict b{font-size:22px;line-height:1.2;display:block}
+.v-ok b{color:var(--cob)}.v-bad b{color:var(--bad)}.v-warn b{color:var(--warn)}
+.meter{position:relative;height:14px;border-radius:7px;background:linear-gradient(90deg,var(--bad2),var(--cob2));margin:30px 0 26px;border:1px solid var(--line)}
+.meter i{position:absolute;top:-6px;width:4px;height:26px;border-radius:2px;background:var(--ink);transform:translateX(-2px);transition:left .8s ease}
+.meter .thr{position:absolute;top:-24px;font-size:13px;color:var(--mute);transform:translateX(-50%);white-space:nowrap}
+.meter .thr::after{content:"";position:absolute;left:50%;top:20px;height:28px;border-left:2px dashed var(--mute)}
+.meter .val{position:absolute;top:18px;font-weight:700;transform:translateX(-50%);white-space:nowrap;transition:left .8s ease}
+.figs{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:8px}
+.figs figure{margin:0}.figs img{border-radius:12px;border:1px solid var(--line)}
+figcaption{font-size:13px;color:var(--mute);margin-top:6px}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:8px}
+.kpi{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:16px}
+.kpi b{font-size:clamp(26px,3vw,34px);display:block;font-variant-numeric:tabular-nums}
+.kpi span{color:var(--mute);font-size:14px}
+.sig{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px 16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.tag{font-size:13px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap}
+.t-bad{background:var(--bad2);color:var(--bad)}.t-warn{background:var(--warn2);color:var(--warn)}.t-cob{background:var(--cob2);color:var(--cob)}
+label{display:block;font-size:14px;color:var(--mute);margin:12px 0 4px}
+input[type=text],select,textarea{width:100%;min-height:44px;padding:10px 12px;font-size:16px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.chk{display:flex;gap:8px;align-items:flex-start;color:var(--ink);font-size:15px}
+.chk input{width:20px;height:20px;margin-top:3px;flex:none}
+.paper{background:#fff;color:#111;border-radius:6px;padding:24px 26px;font:15px/1.5 "PT Serif",Georgia,serif;box-shadow:0 2px 10px rgba(14,26,58,.15);white-space:pre-wrap}
+.shop{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.prod{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:10px;display:flex;flex-direction:column}
+.prod img{border-radius:10px;aspect-ratio:1;object-fit:cover}
+.prod .price{font-weight:700;font-size:18px;margin-top:8px}
+.prod .nm{font-size:14px;line-height:1.3}
+.prod .sl{font-size:13px;color:var(--mute)}
+.badge{display:inline-flex;align-items:center;gap:6px;background:var(--cob);color:#fff;border-radius:8px;padding:4px 8px;font-size:13px;font-weight:600;margin-top:8px;align-self:flex-start}
+.badge.no{background:transparent;color:var(--mute);border:1px dashed var(--line);font-weight:500}
+.switch{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-weight:500}
+.switch input{width:22px;height:22px}
+.msg{border-radius:12px;padding:12px 14px;margin-top:14px;font-size:15px}
+.clause{font-size:14px;color:var(--mute);border-left:3px solid var(--cob);padding-left:12px;margin-top:16px}
+.stepper{list-style:none;padding:0;margin:0 0 18px;display:flex;gap:8px;flex-wrap:wrap}
+.stepper li{padding:6px 12px;border-radius:20px;background:var(--surf);border:1px solid var(--line);font-size:14px;color:var(--mute)}
+.stepper li.cur{background:var(--cob);border-color:var(--cob);color:#fff}
+.stepper li.dn{color:var(--cob);border-color:var(--cob)}
+.pane{display:none}.pane.on{display:block}
+table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:14px;color:var(--mute);font-weight:600}
+.scroll{overflow-x:auto}
+@media(max-width:900px){.shop{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.grid2,.figs{grid-template-columns:minmax(0,1fr)}.opts{grid-template-columns:minmax(0,1fr)}.opt{grid-template-columns:84px minmax(0,1fr)}.kpis{grid-template-columns:minmax(0,1fr)}.sig{grid-template-columns:minmax(0,1fr)}dl.doc{grid-template-columns:minmax(0,1fr)}dl.doc dt{border-bottom:0;padding-bottom:0}.bar{gap:6px}}
+@media(max-width:760px){.scroll thead{display:none}.scroll tr{display:block;padding:12px 0;border-bottom:1px solid var(--line)}.scroll td{display:block;border:0;padding:2px 0}.scroll td:first-child{font-weight:700}.scroll td:last-child{color:var(--mute);font-size:14px}}
+@media(prefers-reduced-motion:reduce){.meter i,.meter .val{transition:none}}
+</style>
+</head>
+<body>
+<header class="top">
+ <div class="bar">
+  <a class="logo" href="#passport" aria-label="НХП-ID, на главную"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#fff"/><g fill="#1d3f9a"><path d="M16 5c3 4 3 8 0 11-3-3-3-7 0-11z"/><path d="M27 16c-4 3-8 3-11 0 3-3 7-3 11 0z"/><path d="M16 27c-3-4-3-8 0-11 3 3 3 7 0 11z"/><path d="M5 16c4-3 8-3 11 0-3 3-7 3-11 0z"/></g><circle cx="16" cy="16" r="2.4" fill="#fff"/></svg>НХП-ID</a>
+  <nav aria-label="Разделы прототипа">
+   <a href="#passport">Паспорт</a><a href="#check">Проверка</a><a href="#market">Маркетплейс</a><a href="#holder">Правообладатель</a><a href="#issue">Мастер</a><a href="#about">О прототипе</a>
+  </nav>
+ </div>
+</header>
+<div class="note">Прототип к конкурсной работе «НХП-ID». Изделия и организации вымышлены; оценки проверки рассчитаны алгоритмом из эксперимента (п. 4.4 работы).</div>
+<main>
+
+<section id="v-passport" data-v="passport">
+ <div class="status"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#fff"/><path d="M7 12.5l3.2 3.2L17.5 8.5" fill="none" stroke="#1d3f9a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Паспорт действителен</b><small>НХП-ID <span class="id">50-ГЖ-27-000142</span> · подпись изготовителя проверена</small></div></div>
+ <div class="grid2">
+  <div class="pic">
+   <div class="pw">
+    <img class="plate" src="img/plate_passport.jpg" alt="Тарелка «Синяя роза»: кобальтовая роспись по белому фарфору" width="720" height="720">
+    <div class="seal" role="img" aria-label="Клеймо с QR-кодом паспорта">
+     <svg viewBox="0 0 200 200" aria-hidden="true"><defs><path id="ring" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs><circle cx="100" cy="100" r="96" fill="none" stroke="#1d3f9a" stroke-width="5"/><circle cx="100" cy="100" r="64" fill="none" stroke="#1d3f9a" stroke-width="1.5"/><text font-family="Golos Text, sans-serif" font-size="15" font-weight="600" fill="#1d3f9a"><textPath href="#ring" textLength="486" lengthAdjust="spacing">ЦИФРОВОЙ ПАСПОРТ · НХП-ID · ГЖЕЛЬ · 2027 ·</textPath></text></svg>
+     <img src="img/qr.svg" alt="">
+    </div>
+   </div>
+   <div class="thumbs"><img src="img/plate_detail.jpg" alt="Фрагмент росписи крупно" width="88" height="88"><span>Фрагмент росписи из паспорта: по нему строится визуальный отпечаток</span></div>
+  </div>
+  <div>
+   <p class="docttl">Цифровой паспорт изделия народного художественного промысла</p>
+   <p class="lead" style="margin-bottom:14px">Запись в реестре НХП-ID, подписанная изготовителем</p>
+   <dl class="doc">
+    <dt>Изделие</dt><dd>Тарелка декоративная «Синяя роза», фарфор, ⌀&nbsp;24&nbsp;см</dd>
+    <dt>Промысел</dt><dd>Гжель</dd>
+    <dt>Место бытования</dt><dd>Гжельский куст, Раменский городской округ, Московская обл. <span class="ok">✓ реестр мест</span></dd>
+    <dt>Типовой образец</dt><dd>«Синяя роза», рег. № 50-0417 <span class="ok">✓ реестр образцов</span></dd>
+    <dt>Изготовитель</dt><dd>ООО «Мастерская „Синий узор“»</dd>
+    <dt>Мастер</dt><dd>Анна Миронова <span class="ok">✓ реестр мастеров</span><br><small style="color:var(--mute)">сведения раскрыты с согласия мастера</small></dd>
+    <dt>Дата изготовления</dt><dd>12.01.2027</dd>
+    <dt>НМПТ</dt><dd>«Гжель» – право использования подтверждено</dd>
+    <dt>Носитель</dt><dd>QR-код на надглазурной деколи, вжигаемой при обжиге</dd>
+    <dt>Визуальный отпечаток</dt><dd><span id="kpn">1 026</span> ключевых точек росписи</dd>
+   </dl>
+   <h2>Журнал событий</h2>
+   <ol class="tl">
+    <li><time>12.01.2027</time><span>Выпуск паспорта, подпись УКЭП изготовителя</span></li>
+    <li><time>19.01.2027</time><span>Карточка на площадке «Пример-Маркет»: проверка по API пройдена</span></li>
+    <li><time>02.02.2027</time><span>Продажа: владелец сменился, Москва</span></li>
+    <li><time>03.02.2027</time><span>Проверка покупателем по фото: совпадение <b id="ownsc">0,92</b></span></li>
+   </ol>
+   <div class="row"><a class="btn" href="#check">Проверить изделие по фото</a><a class="btn ghost" href="#holder">Сообщить о подозрении</a></div>
+  </div>
+ </div>
+</section>
+
+<section id="v-check" data-v="check">
+ <h1>Проверка изделия по фото</h1>
+ <p class="lead">Метка считана: НХП-ID <span class="id">50-ГЖ-27-000142</span>. Выберите снимок, который сделал покупатель, и система сравнит его с паспортом.</p>
+ <div class="opts" role="group" aria-label="Снимок покупателя">
+  <button class="opt" id="o-own" data-s="own" aria-pressed="false"><img src="img/shot_own.jpg" alt="" width="480" height="480"><div><b>Это изделие</b><span>Снимок с телефона: другой ракурс и свет</span></div></button>
+  <button class="opt" id="o-other" data-s="other" aria-pressed="false"><img src="img/shot_other.jpg" alt="" width="480" height="480"><div><b>Другой экземпляр того же образца</b><span>Метку переклеили на похожую тарелку</span></div></button>
+  <button class="opt" id="o-print" data-s="print" aria-pressed="false"><img src="img/shot_print.jpg" alt="" width="480" height="480"><div><b>Тиражная копия</b><span>Рисунок нанесен деколью, а не кистью</span></div></button>
+ </div>
+ <ol class="steps" id="steps"><li>Совмещение снимка с паспортом по ключевым точкам</li><li>Сравнение микрофактуры мазков</li><li>Сверка с другими паспортами реестра</li></ol>
+ <div id="res" hidden>
+  <div class="verdict" id="verdict"><b id="vt"></b><span id="vd"></span></div>
+  <div class="meter" id="meter" aria-hidden="true"><span class="thr" style="left:60%">порог 0,6</span><i id="mk" style="left:0%"></i><span class="val" id="mv" style="left:0%"></span></div>
+  <p style="margin:0 0 6px;color:var(--mute);font-size:14px">Оценка сходства микрофактуры от 0 до 1 · совмещено точек: <b id="inl"></b></p>
+  <div class="figs">
+   <figure><img id="fm" alt="Совпавшие ключевые точки: паспорт слева, снимок покупателя справа"><figcaption>Совпавшие ключевые точки: паспорт слева, снимок покупателя справа</figcaption></figure>
+   <figure><img id="ft" alt="Микрофактура мазков: паспорт слева, снимок справа"><figcaption>Микрофактура одного участка: паспорт и снимок после совмещения</figcaption></figure>
+  </div>
+ </div>
+</section>
+
+<section id="v-market" data-v="market">
+ <h1>Маркетплейс: отметка «Подлинный НХП»</h1>
+ <p class="lead">Площадка проверяет паспорт по API при размещении карточки и показывает покупателю отметку. Ниже – вид покупателя и кабинет продавца.</p>
+ <label class="switch"><input type="checkbox" id="onlyok"> Показывать только «Подлинный НХП»</label>
+ <div class="shop" id="shop"></div>
+ <h2>Кабинет продавца: новая карточка</h2>
+ <div class="grid2">
+  <form class="card" id="sellf" novalidate>
+   <label for="s-title">Название товара</label><input type="text" id="s-title" value="Тарелка Гжель ручная роспись «Роза»">
+   <label for="s-seller">Продавец</label><select id="s-seller"><option value="m">ООО «Мастерская „Синий узор“» (изготовитель)</option><option value="o">ООО «СувенирОпт»</option></select>
+   <label for="s-id">НХП-ID изделия</label><input type="text" id="s-id" placeholder="например, 50-ГЖ-27-000142">
+   <div class="row"><button class="btn" type="submit">Отправить на модерацию</button><button class="btn ghost" type="button" id="s-fill" title="Подставить пример НХП-ID">Пример НХП-ID</button></div>
+   <div id="s-msg" class="msg" hidden></div>
+  </form>
+  <div>
+   <p style="margin-top:0"><b>Как работает проверка</b></p>
+   <ol style="padding-left:20px;margin:0">
+    <li>В названии ищутся наименования промыслов и НМПТ из реестра.</li>
+    <li>Если они есть, нужен действующий НХП-ID, а продавец должен быть изготовителем или следующим владельцем по журналу паспорта.</li>
+    <li>Без паспорта площадка ограничивает карточку с уведомлением продавца и правом на досудебную жалобу (ч. 3 ст. 13, ст. 14 Закона № 289-ФЗ).</li>
+   </ol>
+   <p class="clause">Условие оферты: «Партнер вправе использовать в карточке товара наименование народного художественного промысла, наименование места происхождения товара или географическое указание, связанные с народным художественным промыслом, только при указании действующего идентификатора цифрового паспорта изделия (НХП-ID)».</p>
+  </div>
+ </div>
+</section>
+
+<section id="v-holder" data-v="holder">
+ <h1>Кабинет правообладателя НМПТ</h1>
+ <p class="lead">Ассоциация «Гжельский промысел» видит сигналы реестра и в один клик готовит заявление площадке.</p>
+ <div class="kpis"><div class="kpi"><b>1 248</b><span>паспортов выпущено</span></div><div class="kpi"><b>3 912</b><span>проверок покупателями за 7 дней</span></div><div class="kpi"><b>3</b><span>открытых сигнала</span></div></div>
+ <div id="sigs"></div>
+ <h2>Заявление площадке по ч. 6 ст. 7 Закона № 289-ФЗ</h2>
+ <div class="grid2">
+  <form class="card" id="clf" novalidate>
+   <label for="c-mp">Площадка</label><input type="text" id="c-mp" value="Пример-Маркет">
+   <label for="c-url">Карточка товара</label><input type="text" id="c-url" value="https://primer-market.example/item/7731904">
+   <label for="c-sel">Продавец</label><input type="text" id="c-sel" value="ООО «СувенирОпт»">
+   <label for="c-why">Что показал реестр</label><select id="c-why"><option value="none">паспорт на товар не оформлен</option><option value="other">паспорт выдан на другое изделие</option><option value="print">признаки тиражного нанесения декора</option></select>
+   <label>Основания</label>
+   <div class="chk"><input type="checkbox" id="c-gk" checked><label for="c-gk" style="margin:0;color:inherit">п. 3 ст. 1519 и п. 3 ст. 1516 ГК РФ</label></div>
+   <div class="chk"><input type="checkbox" id="c-13" checked><label for="c-13" style="margin:0;color:inherit">просьба ограничить карточку (ст. 13 Закона № 289-ФЗ)</label></div>
+   <div class="row"><button class="btn" type="button" id="c-copy">Копировать текст</button></div>
+   <div id="c-msg" class="msg" hidden></div>
+  </form>
+  <div class="paper" id="paper" aria-live="polite"></div>
+ </div>
+</section>
+
+<section id="v-issue" data-v="issue">
+ <h1>Мастер: выпуск паспорта</h1>
+ <p class="lead">Четыре шага на стороне изготовителя: образец, фото и отпечаток, подпись, носитель метки.</p>
+ <ol class="stepper" id="stp"><li>1. Образец</li><li>2. Отпечаток</li><li>3. Подпись</li><li>4. Метка</li></ol>
+ <div class="card">
+  <div class="pane" data-p="0">
+   <p style="margin-top:0">Выберите типовой образец из государственного реестра образцов:</p>
+   <div class="chk"><input type="radio" name="obr" id="ob1" checked><label for="ob1" style="margin:0;color:inherit">«Синяя роза», рег. № 50-0417 (тарелка ⌀&nbsp;24&nbsp;см)</label></div>
+   <div class="chk"><input type="radio" name="obr" id="ob2"><label for="ob2" style="margin:0;color:inherit">«Букет», рег. № 50-0388 (блюдо ⌀&nbsp;30&nbsp;см)</label></div>
+   <div class="chk"><input type="radio" name="obr" id="ob3"><label for="ob3" style="margin:0;color:inherit">«Птица на ветке», рег. № 50-0452 (чашка)</label></div>
+   <div class="row"><button class="btn nx" type="button">Далее</button></div>
+  </div>
+  <div class="pane" data-p="1">
+   <div class="grid2"><img src="img/keypoints.jpg" alt="Ключевые точки росписи на фото тарелки" width="600" height="600" style="border-radius:14px"><div><p style="margin-top:0">Фото в лайтбоксе загружено. Алгоритм выделил ключевые точки и фактуру мазков.</p><p><b id="kp2">1 026</b> точек сохранено в паспорте как визуальный отпечаток. Отпечаток проверен на совпадение с уже выпущенными паспортами: <span class="ok">совпадений нет</span>, значит, роспись не тиражная.</p><div class="row"><button class="btn nx" type="button">Далее</button></div></div></div>
+  </div>
+  <div class="pane" data-p="2">
+   <p style="margin-top:0">Паспорт подписывается усиленной квалифицированной электронной подписью изготовителя.</p>
+   <button class="btn" type="button" id="sign">Подписать УКЭП</button>
+   <div id="signed" class="msg v-ok" hidden>Подписано: ООО «Мастерская „Синий узор“», сертификат действителен до 12.2027.</div>
+   <div class="row"><button class="btn nx" type="button" id="nx2" disabled>Далее</button></div>
+  </div>
+  <div class="pane" data-p="3">
+   <div class="grid2"><div><p style="margin-top:0">Носитель подбирается под материал:</p>
+    <div class="chk"><input type="radio" name="car" id="ca1" checked><label for="ca1" style="margin:0;color:inherit">Деколь с QR, вжигается при обжиге (фарфор)</label></div>
+    <div class="chk"><input type="radio" name="car" id="ca2"><label for="ca2" style="margin:0;color:inherit">NFC-метка под лаком (дерево)</label></div>
+    <div class="chk"><input type="radio" name="car" id="ca3"><label for="ca3" style="margin:0;color:inherit">Тканая этикетка с QR (текстиль)</label></div>
+    <p>Паспорт <span class="id">50-ГЖ-27-000142</span> выпущен и доступен для проверки.</p><div class="row"><a class="btn" href="#passport">Открыть паспорт</a></div></div>
+    <div style="max-width:260px;margin:auto"><div class="seal" style="position:relative;right:auto;bottom:auto;width:100%"><svg viewBox="0 0 200 200" aria-hidden="true"><defs><path id="ring2" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs><circle cx="100" cy="100" r="96" fill="none" stroke="#1d3f9a" stroke-width="5"/><circle cx="100" cy="100" r="64" fill="none" stroke="#1d3f9a" stroke-width="1.5"/><text font-family="Golos Text, sans-serif" font-size="15" font-weight="600" fill="#1d3f9a"><textPath href="#ring2" textLength="486" lengthAdjust="spacing">ЦИФРОВОЙ ПАСПОРТ · НХП-ID · ГЖЕЛЬ · 2027 ·</textPath></text></svg><img src="img/qr.svg" alt="QR-код для деколи"></div><p style="text-align:center;font-size:14px;color:var(--mute)">Макет деколи ⌀&nbsp;30&nbsp;мм</p></div></div>
+  </div>
+ </div>
+</section>
+
+<section id="v-about" data-v="about">
+ <h1>Что показывает прототип</h1>
+ <p class="lead">Каждый экран соответствует части модели из конкурсной работы.</p>
+ <div class="scroll"><table>
+  <thead><tr><th>Экран</th><th>Что демонстрирует</th><th>Раздел работы и нормы</th></tr></thead>
+  <tbody>
+   <tr><td>Паспорт</td><td>Связь экземпляра с реестрами образцов, мест бытования и мастеров; журнал событий</td><td>п. 3.1–3.2; ст. 3, 6, 7.1, 9 Закона о НХП; проект ст. 7.2</td></tr>
+   <tr><td>Проверка</td><td>Два ключа: метка и визуальный отпечаток; выявление переклеенной метки и тиража</td><td>п. 3.2, 4.4; п. 3 ст. 7 Закона о НХП</td></tr>
+   <tr><td>Маркетплейс</td><td>Проверка карточки по API, отметка «Подлинный НХП», условие оферты</td><td>п. 3.3; ст. 7, 13, 14 Закона № 289-ФЗ</td></tr>
+   <tr><td>Правообладатель</td><td>Сигналы реестра и заявление площадке</td><td>п. 3.3; ч. 6 ст. 7 Закона № 289-ФЗ; ст. 1253.1, 1519 ГК РФ</td></tr>
+   <tr><td>Мастер</td><td>Выпуск паспорта: образец, отпечаток, УКЭП, носитель</td><td>п. 3.2, 3.4; ст. 10.1 Закона о персональных данных</td></tr>
+  </tbody></table></div>
+ <p>Снимки на экране «Проверка» – модельные изображения из эксперимента (п. 4.4). Оценки на нем не нарисованы, а получены тем же алгоритмом: совмещение по признакам SIFT с отбором RANSAC и корреляция микрофактуры мазков, порог 0,6. В тестовой выборке он принял все 120 снимков своих экземпляров, отклонил все 4680 сравнений с чужими и выявил все печатные копии.</p>
+</section>
+
+</main>
+<script>
+{
+const R = {own:{inliers:159,score:0.918},other:{inliers:26,score:0.282},print:{inliers:304,score:0.928,dup:10}};
+const fmt = x => x.toFixed(2).replace('.', ',');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = id => document.getElementById(id);
+
+/* навигация по экранам */
+const views = ['passport','check','market','holder','issue','about'];
+function show(){
+  const v = views.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'passport';
+  for (const s of document.querySelectorAll('section')) s.classList.toggle('on', s.dataset.v === v);
+  for (const a of document.querySelectorAll('nav a')) a.toggleAttribute('aria-current', a.getAttribute('href') === '#' + v), a.getAttribute('href') === '#' + v && a.setAttribute('aria-current','page');
+  window.scrollTo(0, 0);
+}
+addEventListener('hashchange', show); show();
+
+/* проверка по фото */
+const V = {
+  own:{c:'v-ok', t:'Совпадает с паспортом', d:'Роспись на снимке – та самая, что зафиксирована при выпуске паспорта. Изделие подлинное.'},
+  other:{c:'v-bad', t:'Не совпадает: это другой экземпляр', d:'Форма рисунка похожа – это тот же образец, но микрофактура мазков другая. Метка, вероятно, перенесена на другое изделие. Сигнал отправлен правообладателю.'},
+  print:{c:'v-warn', t:'Тиражный рисунок', d:'Снимок совпал сразу с ' + R.print.dup + ' паспортами реестра: так бывает только при механическом нанесении декора. Изделия без творческого варьирования к НХП не относятся (п. 3 ст. 7 Закона о НХП).'}
+};
+let timer = [];
+function check(s){
+  for (const b of document.querySelectorAll('.opt')) b.setAttribute('aria-pressed', b.dataset.s === s);
+  timer.forEach(clearTimeout); timer = [];
+  const li = [...document.querySelectorAll('#steps li')]; li.forEach(x => x.classList.remove('done'));
+  $('res').hidden = true;
+  li.forEach((x, i) => timer.push(setTimeout(() => x.classList.add('done'), 350 * (i + 1))));
+  timer.push(setTimeout(() => {
+    const r = R[s], v = V[s];
+    $('verdict').className = 'verdict ' + v.c; $('vt').textContent = v.t; $('vd').textContent = v.d;
+    $('inl').textContent = r.inliers;
+    $('fm').src = 'img/match_' + s + '.jpg'; $('ft').src = 'img/tex_' + s + '.jpg';
+    $('res').hidden = false;
+    $('mk').style.left = '0%'; $('mv').style.left = '0%'; $('mv').textContent = fmt(r.score);
+    requestAnimationFrame(() => requestAnimationFrame(() => { $('mk').style.left = (r.score * 100) + '%'; $('mv').style.left = (r.score * 100) + '%'; }));
+  }, 1250));
+}
+for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => check(b.dataset.s));
+check('own');
+
+/* витрина */
+const P = [
+  {img:'plate_c.jpg', nm:'Тарелка «Синяя роза», ручная роспись', sl:'Мастерская «Синий узор»', pr:'2 490 ₽', ok:true},
+  {img:'plate_b.jpg', nm:'Тарелка «Синяя роза», ⌀ 24 см', sl:'Мастерская «Синий узор»', pr:'2 590 ₽', ok:true},
+  {img:'plate_print.jpg', nm:'Тарелка в стиле гжель, деколь', sl:'СувенирОпт', pr:'690 ₽', ok:false},
+  {img:'plate_d.jpg', nm:'Тарелка «Роза», ручная роспись', sl:'Дом подарков', pr:'1 150 ₽', ok:false}
+];
+function shop(){
+  const only = $('onlyok').checked;
+  $('shop').innerHTML = P.filter(p => !only || p.ok).map(p => '<div class="prod"><img src="img/' + p.img + '" alt="" loading="lazy" width="420" height="420"><div class="price">' + p.pr + '</div><div class="nm">' + esc(p.nm) + '</div><div class="sl">' + esc(p.sl) + '</div>' + (p.ok ? '<span class="badge">✓ Подлинный НХП</span>' : '<span class="badge no">паспорта нет</span>') + '</div>').join('');
+}
+$('onlyok').addEventListener('change', shop); shop();
+
+const NAMES = /(?:гжел|хохлом|жостов|палех|городецк|вологодск\S*\s+кружев|павловопосад)[^\s,.;:!?«»"()]*/i;
+const DEMO = '50-ГЖ-27-000142';
+const norm = s => s.trim().toUpperCase().replace(/\s+/g, '');
+function say(el, cls, html){ el.className = 'msg ' + cls; el.innerHTML = html; el.hidden = false; }
+$('s-fill').addEventListener('click', () => { $('s-id').value = DEMO; });
+$('sellf').addEventListener('submit', ev => {
+  ev.preventDefault();
+  const t = $('s-title').value, id = norm($('s-id').value), seller = $('s-seller').value, m = $('s-msg');
+  const hit = (t.match(NAMES) || [''])[0];
+  if (!hit && !id) return say(m, 'v-ok', 'Карточка принята. Наименований промыслов и НМПТ нет, отметка «Подлинный НХП» не присваивается.');
+  if (!id) return say(m, 'v-bad', 'Карточка ограничена: в названии есть «' + esc(hit) + '», а НХП-ID не указан. Укажите паспорт или уберите наименование (условие оферты; п. 3 ч. 1 ст. 13 Закона № 289-ФЗ). Продавец уведомлен, жалоба – в порядке ст. 14.');
+  if (id !== norm(DEMO)) return say(m, 'v-bad', 'Паспорт «' + esc($('s-id').value.trim()) + '» в реестре не найден. Проверьте номер на метке изделия.');
+  if (seller !== 'm') return say(m, 'v-warn', 'Паспорт действителен, но продавец не значится ни изготовителем, ни владельцем в журнале паспорта. Нужна запись о передаче изделия.');
+  say(m, 'v-ok', '✓ Паспорт действителен, продавец – изготовитель. Карточке присвоена отметка «Подлинный НХП».');
+});
+
+/* сигналы и заявление */
+const S = [
+  {tg:'t-bad', tn:'Метка-клон', tx:'НХП-ID 50-ГЖ-27-000981 проверен 14 раз в 5 регионах за 2 дня, а паспорт выдан на одну тарелку', why:'other'},
+  {tg:'t-warn', tn:'Тираж', tx:'Снимки товара продавца «СувенирОпт» совпали с ' + R.print.dup + ' паспортами: признак механического нанесения декора', why:'print'},
+  {tg:'t-cob', tn:'НМПТ без паспорта', tx:'Карточка «Тарелка гжель ручная роспись» на «Пример-Маркет» без НХП-ID', why:'none'}
+];
+$('sigs').innerHTML = S.map((s, i) => '<div class="sig"><span class="tag ' + s.tg + '">' + s.tn + '</span><span>' + esc(s.tx) + '</span><button class="btn ghost" type="button" data-i="' + i + '">Подготовить заявление</button></div>').join('');
+for (const b of document.querySelectorAll('#sigs button')) b.addEventListener('click', () => { $('c-why').value = S[b.dataset.i].why; paper(); $('paper').scrollIntoView({behavior:'smooth', block:'nearest'}); });
+const WHY = {none:'для указанного товара цифровой паспорт изделия не оформлен', other:'НХП-ID, указанный продавцом, выдан на другое изделие: визуальный отпечаток росписи не совпадает с паспортом', print:'снимки товара совпадают с визуальными отпечатками нескольких паспортов, что указывает на тиражное нанесение декора'};
+function paper(){
+  const d = '05.02.2027';
+  let t = 'Оператору посреднической цифровой платформы «' + $('c-mp').value + '»\nот Ассоциации «Гжельский промысел», правообладателя НМПТ «Гжель»\n\nЗАЯВЛЕНИЕ\nо прекращении размещения информации, нарушающей исключительное право\n(ч. 6 ст. 7 Федерального закона от 31.07.2025 № 289-ФЗ)\n\nВ карточке товара ' + $('c-url').value + ' (продавец: ' + $('c-sel').value + ') используется наименование «Гжель», тождественное наименованию места происхождения товара, исключительное право на которое принадлежит заявителю. По данным реестра НХП-ID ' + WHY[$('c-why').value] + '.';
+  if ($('c-gk').checked) t += '\n\nСогласно п. 3 ст. 1519 во взаимосвязи с п. 3 ст. 1516 ГК РФ использование НМПТ лицом, не имеющим исключительного права, в том числе в сочетании со словами «род», «тип», «имитация», является незаконным.';
+  t += '\n\nПрошу прекратить размещение указанной информации' + ($('c-13').checked ? ' и ограничить карточку товара в порядке ст. 13 Закона № 289-ФЗ.' : '.');
+  t += '\n\nПриложение: выписка из реестра НХП-ID от ' + d + ', подписанная УКЭП.\n\n' + d + '          ______________ / уполномоченное лицо';
+  $('paper').textContent = t;
+}
+for (const id of ['c-mp','c-url','c-sel','c-why','c-gk','c-13']) $(id).addEventListener('input', paper);
+$('c-why').addEventListener('change', paper); paper();
+$('c-copy').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText($('paper').textContent); say($('c-msg'), 'v-ok', 'Текст заявления скопирован.'); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents($('paper')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); say($('c-msg'), 'v-warn', 'Браузер не дал скопировать автоматически: текст выделен, нажмите Ctrl+C.'); }
+});
+
+/* выпуск паспорта */
+let st = 0;
+function stp(){ [...document.querySelectorAll('#stp li')].forEach((li, i) => li.className = i < st ? 'dn' : i === st ? 'cur' : ''); for (const p of document.querySelectorAll('.pane')) p.classList.toggle('on', +p.dataset.p === st); }
+for (const b of document.querySelectorAll('.nx')) b.addEventListener('click', () => { st = Math.min(3, st + 1); stp(); });
+$('sign').addEventListener('click', () => { $('signed').hidden = false; $('nx2').disabled = false; $('sign').disabled = true; });
+stp();
+}
+</script>
+</body>
+</html>
